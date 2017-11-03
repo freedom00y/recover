@@ -1,0 +1,76 @@
+---
+title: "User manual"
+output: html_document
+---
+
+#Introduce the method
+##Proximal Gradient Algorithm 
+Suppose matrix $X$ is the observation matrix which only part of elements can be observed. Let $Omega$ as the set of these subscripts which elements can be observed. The aim is to find the matrix $Y$ so that
+
+$$\min_{Y\in R^{m\times n}} \Vert P_\Omega(Y - X) \Vert_F^2 + \lambda \Vert Y\Vert_{S_1}$$
+
+Since 
+$$\Vert P_\Omega(Y - X) \Vert_F^2=\Vert Y-\{Y-P_\Omega(Y - X)\} \Vert_F^2\ ,$$
+where
+$$\{P_{\Omega}(Y)\}_{ij} = \begin{cases} y_{ij} & (i,j)\in\Omega \\ 0 & (i,j)\notin\Omega \\ \end{cases}$$
+So the problem is 
+$$\min_{Y\in R^{m\times n}} \Vert Y-\{Y-P_\Omega(Y - X)\} \Vert_F^2 + \lambda \Vert Y\Vert_{S_1}\ .$$
+As we know that the solution of 
+$$min_{X\in R^{m\times n}}f(X) = \frac{1}{2}\Vert X-A \Vert_F^2
++\mu \Vert X \Vert_{S_1}$$
+is 
+$$\hat{X}=U_r[\Sigma_r-\mu I_r]_+V_r^T$$
+where $A=U_r\Sigma_rV_r^T$.
+
+In our problem, 
+$$\hat{Y}=U_r[\Sigma_r-2\lambda I_r]_+V_r^T$$
+where $A=Y-P_\Omega(Y - X)=U_r\Sigma_rV_r^T$.
+
+We can use $\hat{Y}$ as the new $Y$ Repeat this progress until convergence.
+
+##Accelerated Proximal Gradient Algorithm
+In order to accelerate the progress, we use the mind that 
+$$Y_{new}'=Y_{new}+\beta (Y_{new}-Y_{old})$$
+Here we choose the $\beta$ dynamically.
+
+#An example
+Next, we provide an example:
+
+```{r original picture}
+library(recoverpic)
+library(jpeg)
+img = readJPEG("./data/dog.jpg")
+img = img[,,1]
+par(mar = c(0,0,0,0))
+plot(0,0,type = "n")
+rasterImage(img, -1, -1, 1, 1)
+```
+
+Use the 'vague' function to make 40% elements to 'NA'.
+```{r vague}
+vimg = vague(img)
+vimg[vimg==100] = NA
+par(mar = c(0,0,0,0))
+plot(0,0,type = "n")
+rasterImage(vimg, -1, -1, 1, 1)
+```
+
+Use our method to recover this picture.
+```{r recover}
+nimgac = recover(vimg,1)
+par(mar = c(0,0,0,0))
+plot(0,0,type = "n")
+rasterImage(nimgac$newimg, -1, -1, 1, 1)
+```
+
+The function 'recover' has three parameters, the third one represents whether using the accelerated method. '1' means to use accelerated method while '0' means not. Default means to use accelerated method.
+
+Next step, we compare the iterations between accelerated method and unaccelerated method.
+```{r compare}
+nimguac = recover(vimg,1,0)
+irt0=nimguac$'repeat time'
+irt1=nimgac$'repeat time'
+irt0
+irt1
+```
+'irt0' is iterations of unaccelerated method while 'irt1' is iterations of accelerated method. It shows that accelerated method is faster than the other.

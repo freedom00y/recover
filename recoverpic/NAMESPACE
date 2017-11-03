@@ -1,0 +1,3 @@
+useDynLib(recoverpic)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")

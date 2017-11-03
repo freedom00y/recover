@@ -1,0 +1,12 @@
+Package: recoverpic
+Type: Package
+Title: Fill in the missing value for pictures
+Version: 1.0
+Date: 2017-11-02
+Author: Freedom Zhou
+Maintainer: Freedom Zhou<freedom00y@ruc.edu.cn>
+Description: Using Accelerated Proximal Gradient method to fill in the missing value for picures
+License: GNU GPLv3
+Imports: Rcpp (>= 0.12.10)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
